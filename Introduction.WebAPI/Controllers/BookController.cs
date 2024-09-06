@@ -1,43 +1,52 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Introduction.Model;
+using Introduction.Service;
+using Introduction.Service.Common;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 
 namespace Introduction.WebAPI.Controllers
 {
     public class BookController: ControllerBase
     {
-        private const string connectionString = "Host=localhost:5432;" +
-        "Username=postgres;" +
-        "Password=postgres;" +
-        "Database=postgres";
-
         [HttpPost]
         [Route("PostBook/")]
         public IActionResult PostBook([FromBody] Book book)
         {
             try
             {
-                using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
-                string commandText = $"INSERT INTO\"Book\"VALUES(@id, @Title, @Description);";
-                using var command = new NpgsqlCommand(commandText, connection);
+                BookService bookService = new BookService();
+                var checker = bookService.PostBook(book);
+                if ( checker == false)
+                    return BadRequest("Book not posted");
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+            
+        }
 
-                command.Parameters.AddWithValue("@id", NpgsqlTypes.NpgsqlDbType.Uuid, Guid.NewGuid());
-                command.Parameters.AddWithValue("@Title", book.Title);
-                command.Parameters.AddWithValue("@Description", book.Description);
-
-                connection.Open();
-                var numberOfCommits = command.ExecuteNonQuery();
-                connection.Close();
-
-                if (numberOfCommits == 0)
+        public ActionResult DeleteBookById(Guid id)
+        {
+            try
+            {
+                BookService bookService = new BookService();
+                var checker = bookService.DeleteBookById(id);
+                if (checker == false)
                 {
-                    return BadRequest(); 
+                    return NotFound();
                 }
-                return Ok("Succesfully added!");
+                return Ok("Succesfully deleted!");
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
+
+        
     }
 }

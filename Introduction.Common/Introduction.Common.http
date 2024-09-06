@@ -1,0 +1,6 @@
+@Introduction.Common_HostAddress = http://localhost:5276
+
+GET {{Introduction.Common_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
