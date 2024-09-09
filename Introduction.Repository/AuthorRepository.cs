@@ -2,8 +2,12 @@
 
 namespace Introduction.Repository
 {
-    public class AuthorRepository
+    public class AuthorRepository : IAuthorRepository
     {
-        IAuthorRepository authorRepository;
+        private const string connectionString = "Host=localhost:5432;" +
+        "Username=postgres;" +
+        "Password=postgres;" +
+        "Database=postgres";
+
     }
 }

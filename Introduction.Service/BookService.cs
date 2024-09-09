@@ -1,19 +1,16 @@
 ﻿using Introduction.Model;
 using Introduction.Repository;
 using Introduction.Service.Common;
-using Microsoft.AspNetCore.Mvc;
-using Npgsql;
 
 namespace Introduction.Service
 {
-    public class BookService
+    public class BookService : IBookService
     {
-        public IBookService bookService {  get; set; } 
-
+       
         public bool PostBook(Book book)
         {
-            BookService bookService = new BookService();
-            bool checker = bookService.PostBook(book);
+            BookRepository bookRepository = new BookRepository();
+            bool checker = bookRepository.PostBook(book);
             if (checker == false)
             {
                 return false;
@@ -24,8 +21,30 @@ namespace Introduction.Service
 
         public bool DeleteBookById(Guid id)
         {
-            BookService bookService = new BookService();
-            bool checker = bookService.DeleteBookById(id);
+            BookRepository bookRepository = new BookRepository();
+            bool checker = bookRepository.DeleteBookById(id);
+            if (checker == false)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public bool GetBookById(Guid id)
+        {
+            BookRepository bookRepository = new BookRepository();
+            bool checker = bookRepository.GetBookById(id);
+            if (checker == false)
+            {
+               return false;
+            }  
+            return true;
+        }
+
+        public bool PutBookById(Guid id, Book book)
+        {
+            BookRepository bookRepository = new BookRepository();
+            bool checker = bookRepository.PutBookById(id, book);
             if (checker == false)
             {
                 return false;

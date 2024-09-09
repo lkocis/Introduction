@@ -1,5 +1,5 @@
-﻿using Introduction.Service.Common;
-using Microsoft.AspNetCore.Authorization;
+﻿
+using Introduction.Service.Common;
 
 namespace Introduction.Service
 {
