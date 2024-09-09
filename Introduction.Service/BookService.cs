@@ -6,11 +6,11 @@ namespace Introduction.Service
 {
     public class BookService : IBookService
     {
-       
-        public bool PostBook(Book book)
+
+        public async Task<bool> PostBookAsync(Book book)
         {
             BookRepository bookRepository = new BookRepository();
-            bool checker = bookRepository.PostBook(book);
+            bool checker = await bookRepository.PostBookAsync(book);
             if (checker == false)
             {
                 return false;
@@ -19,10 +19,10 @@ namespace Introduction.Service
 
         }
 
-        public bool DeleteBookById(Guid id)
+        public async Task<bool> DeleteBookByIdAsync(Guid id)
         {
             BookRepository bookRepository = new BookRepository();
-            bool checker = bookRepository.DeleteBookById(id);
+            bool checker = await bookRepository.DeleteBookByIdAsync(id);
             if (checker == false)
             {
                 return false;
@@ -30,10 +30,10 @@ namespace Introduction.Service
             return true;
         }
 
-        public bool GetBookById(Guid id)
+        public async Task<bool> GetBookByIdAsync(Guid id)
         {
             BookRepository bookRepository = new BookRepository();
-            bool checker = bookRepository.GetBookById(id);
+            bool checker = await bookRepository.GetBookByIdAsync(id);
             if (checker == false)
             {
                return false;
@@ -41,10 +41,10 @@ namespace Introduction.Service
             return true;
         }
 
-        public bool PutBookById(Guid id, Book book)
+        public async Task<bool> PutBookByIdAsync(Guid id, Book book)
         {
             BookRepository bookRepository = new BookRepository();
-            bool checker = bookRepository.PutBookById(id, book);
+            bool checker = await bookRepository.PutBookByIdAsync(id, book);
             if (checker == false)
             {
                 return false;

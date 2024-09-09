@@ -13,7 +13,7 @@ namespace Introduction.Repository
         "Password=postgres;" +
         "Database=postgres";
 
-        public bool PostAuthor(Author author)
+        public async Task<bool> PostAuthorAsync(Author author)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace Introduction.Repository
                 command.Parameters.AddWithValue("@DOB", author.DOB);
 
                 connection.Open();
-                var numberOfCommits = command.ExecuteNonQuery();
+                var numberOfCommits = await command.ExecuteNonQueryAsync();
                 connection.Close();
 
                 if (numberOfCommits == 0)
@@ -42,18 +42,18 @@ namespace Introduction.Repository
             }
         }
 
-        public bool DeleteAuthorById(Guid id)
+        public async Task<bool> DeleteAuthorByIdAsync(Guid id)
         {
             try
             {
                 using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
-                var commandText = "DELETE FROM\"Author\"WHERE\"Id\"=@id;";
+                var commandText = "DELETE FROM \"Author\" WHERE\"Id\"=@id;";
                 using var command = new NpgsqlCommand(commandText, connection);
 
                 command.Parameters.AddWithValue("@id", id);
 
                 connection.Open();
-                var numberOfCommits = command.ExecuteNonQuery();
+                var numberOfCommits = await command.ExecuteNonQueryAsync();
                 connection.Close();
 
                 if (numberOfCommits == 0)
@@ -68,7 +68,7 @@ namespace Introduction.Repository
             }
         }
 
-        public bool GetAuthorById(Guid id)
+        public async Task<bool> GetAuthorByIdAsync(Guid id)
         {
             try
             {
@@ -78,7 +78,7 @@ namespace Introduction.Repository
                 using var command = new NpgsqlCommand(commandText, connection);
                 command.Parameters.AddWithValue("@id", id);
                 connection.Open();
-                using NpgsqlDataReader reader = command.ExecuteReader();
+                using NpgsqlDataReader reader = await command.ExecuteReaderAsync();
                 if (reader.HasRows)
                 {
 
@@ -102,7 +102,7 @@ namespace Introduction.Repository
         }
 
         //ne radi
-        public bool PutAuthorById(Guid id, Author author)
+        public async Task<bool> PutAuthorByIdAsync(Guid id, Author author)
         {
             try
             {

@@ -18,12 +18,12 @@ namespace Introduction.WebAPI.Controllers
 
         [HttpPost]
         [Route("PostAuthor/")]
-        public ActionResult PostAuthor([FromBody] Author author)
+        public async Task<ActionResult> PostAuthorAsync([FromBody] Author author)
         {
             try 
             {
                 AuthorService authorService = new AuthorService();
-                bool checker = authorService.PostAuthor(author);
+                bool checker = await authorService.PostAuthorAsync(author);
 
                 if (checker == false)
                 {
@@ -39,12 +39,12 @@ namespace Introduction.WebAPI.Controllers
 
         [HttpDelete]
         [Route("DeleteAuthorById/{id}")]
-        public ActionResult DeleteAuthorById(Guid id)
+        public async Task<ActionResult> DeleteAuthorByIdAsync(Guid id)
         {
             try
             {
                 AuthorService authorService = new AuthorService();
-                bool checker = authorService.DeleteAuthorById(id);
+                bool checker = await authorService.DeleteAuthorByIdAsync(id);
 
                 if (checker == false)
                 {
@@ -60,12 +60,12 @@ namespace Introduction.WebAPI.Controllers
 
         [HttpPut]
         [Route("PutAuthorById/{id}/{dob}")]
-        public ActionResult PutAuthorById(Guid id, [FromBody] Author author)
+        public async Task<ActionResult> PutAuthorByIdAsync(Guid id, [FromBody] Author author)
         {
             try
             {
                 AuthorService authorService = new AuthorService();
-                bool checker = authorService.PutAuthorById(id, author);
+                bool checker = await authorService.PutAuthorByIdAsync(id, author);
                 if (checker == false)
                 {
                     return NotFound();
@@ -81,12 +81,12 @@ namespace Introduction.WebAPI.Controllers
 
         [HttpGet]
         [Route("GetAuthorById/{id}")]
-        public ActionResult GetAuthorById(Guid id)
+        public async Task<ActionResult> GetAuthorByIdAsync(Guid id)
         {
             try
             {
                 AuthorService authorService = new AuthorService();
-                bool checker = authorService.GetAuthorById(id);
+                bool checker = await authorService.GetAuthorByIdAsync(id);
 
                 if (checker == false)
                 {

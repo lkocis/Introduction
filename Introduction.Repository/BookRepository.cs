@@ -14,7 +14,7 @@ namespace Introduction.Repository
         "Password=postgres;" +
         "Database=postgres";
 
-        public bool PostBook(Book book)
+        public async Task<bool> PostBookAsync(Book book)
         {
             try
             {
@@ -28,7 +28,7 @@ namespace Introduction.Repository
                 command.Parameters.AddWithValue("@AuthorId", NpgsqlTypes.NpgsqlDbType.Uuid, book.AuthorId);
 
                 connection.Open();
-                var numberOfCommits = command.ExecuteNonQuery();
+                var numberOfCommits = await command.ExecuteNonQueryAsync();
                 connection.Close();
 
                 if (numberOfCommits == 0)
@@ -43,7 +43,7 @@ namespace Introduction.Repository
             }
         }
 
-        public bool DeleteBookById(Guid id)
+        public async Task<bool> DeleteBookByIdAsync(Guid id)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace Introduction.Repository
                 command.Parameters.AddWithValue("@id", id);
 
                 connection.Open();
-                var numberOfCommits = command.ExecuteNonQuery();
+                var numberOfCommits = await command.ExecuteNonQueryAsync();
                 connection.Close();
 
                 if (numberOfCommits == 0)
@@ -69,7 +69,7 @@ namespace Introduction.Repository
             }
         }
 
-        public bool GetBookById(Guid id)
+        public async Task<bool> GetBookByIdAsync(Guid id)
         {
             try
             {
@@ -80,7 +80,7 @@ namespace Introduction.Repository
                 command.Parameters.AddWithValue("@id", id);
                 connection.Open();
 
-                using NpgsqlDataReader reader = command.ExecuteReader();
+                using NpgsqlDataReader reader = await command.ExecuteReaderAsync();
                 if (reader.HasRows)
                 {
                     reader.Read();
@@ -102,8 +102,8 @@ namespace Introduction.Repository
 
         }
 
-        //ne radi
-        public bool PutBookById(Guid id, Book book)
+  
+        public async Task<bool> PutBookByIdAsync(Guid id, Book book)
         {
             try
             {
@@ -144,7 +144,7 @@ namespace Introduction.Repository
                 command.Connection = connection;
 
                 connection.Open();
-                var numberOfCommits = command.ExecuteNonQuery();
+                var numberOfCommits = await command.ExecuteNonQueryAsync();
                 connection.Close();
 
                 if (numberOfCommits == 0)

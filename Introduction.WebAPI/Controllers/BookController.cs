@@ -11,12 +11,12 @@ namespace Introduction.WebAPI.Controllers
     {
         [HttpPost]
         [Route("PostBook/")]
-        public ActionResult PostBook([FromBody] Book book)
+        public async Task<ActionResult> PostBookAsync([FromBody] Book book)
         {
             try
             {
                 BookService bookService = new BookService();
-                var checker = bookService.PostBook(book);
+                var checker = await bookService.PostBookAsync(book);
                 if ( checker == false)
                     return BadRequest("Book not posted");
                 return Ok();
@@ -29,12 +29,12 @@ namespace Introduction.WebAPI.Controllers
 
         [HttpDelete]
         [Route("DeleteBookById/{id}")]
-        public ActionResult DeleteBookById(Guid id)
+        public async Task<ActionResult> DeleteBookByIdAsync(Guid id)
         {
             try
             {
                 BookService bookService = new BookService();
-                var checker = bookService.DeleteBookById(id);
+                var checker = await bookService.DeleteBookByIdAsync(id);
                 if (checker == false)
                 {
                     return NotFound();
@@ -49,12 +49,12 @@ namespace Introduction.WebAPI.Controllers
 
         [HttpGet]
         [Route("GetBookById/{id}")]
-        public ActionResult GetBookById(Guid id)
+        public async Task<ActionResult> GetBookByIdAsync(Guid id)
         {
             try
             {
                 BookService bookService = new BookService();
-                var checker = bookService.GetBookById(id);
+                var checker = await bookService.GetBookByIdAsync(id);
                 if(checker == false)
                 {
                     return NotFound();
@@ -69,12 +69,12 @@ namespace Introduction.WebAPI.Controllers
 
         [HttpPut]
         [Route("PutBookById/{id}")]
-        public ActionResult PutBookById(Guid id, [FromBody] Book book)
+        public async Task<ActionResult> PutBookByIdAsync(Guid id, [FromBody] Book book)
         {
             try
             {
                 BookService bookService = new BookService();
-                var checker = bookService.PutBookById(id, book);
+                var checker = await bookService.PutBookByIdAsync(id, book);
 
                 if(checker == false)
                 {

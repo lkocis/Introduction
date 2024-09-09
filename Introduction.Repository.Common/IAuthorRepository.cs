@@ -4,9 +4,9 @@ namespace Introduction.Repository.Common
 {
     public interface IAuthorRepository
     {
-        bool PostAuthor(Author author);
-        bool DeleteAuthorById(Guid id);
-        bool GetAuthorById(Guid id);
-        bool PutAuthorById(Guid id, Author author);
+        Task<bool> PostAuthorAsync(Author author);
+        Task<bool> DeleteAuthorByIdAsync(Guid id);
+        Task<bool> GetAuthorByIdAsync(Guid id);
+        Task<bool> PutAuthorByIdAsync(Guid id, Author author);
     }
 }
