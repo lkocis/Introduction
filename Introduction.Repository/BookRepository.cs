@@ -19,12 +19,13 @@ namespace Introduction.Repository
             try
             {
                 using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
-                string commandText = $"INSERT INTO\"Book\"VALUES(@id, @Title, @Description);";
+                string commandText = $"INSERT INTO\"Book\"VALUES(@id, @Title, @Description, @AuthorId);";
                 using var command = new NpgsqlCommand(commandText, connection);
 
                 command.Parameters.AddWithValue("@id", NpgsqlTypes.NpgsqlDbType.Uuid, Guid.NewGuid());
                 command.Parameters.AddWithValue("@Title", book.Title);
                 command.Parameters.AddWithValue("@Description", book.Description);
+                command.Parameters.AddWithValue("@AuthorId", NpgsqlTypes.NpgsqlDbType.Uuid, book.AuthorId);
 
                 connection.Open();
                 var numberOfCommits = command.ExecuteNonQuery();
@@ -74,18 +75,19 @@ namespace Introduction.Repository
             {
                 Book book = new Book();
                 using var connection = new NpgsqlConnection(connectionString);
-                var commandText = "SELECT * FROM \"Book\" WHERE \"Id\" = @id;";
+                var commandText = "SELECT * FROM \"Book\" WHERE \"Id\"= @id;";
                 using var command = new NpgsqlCommand(commandText, connection);
                 command.Parameters.AddWithValue("@id", id);
                 connection.Open();
+
                 using NpgsqlDataReader reader = command.ExecuteReader();
                 if (reader.HasRows)
                 {
-
                     reader.Read();
                     book.Id = Guid.Parse(reader[0].ToString());
                     book.Title = reader[1].ToString();
                     book.Description = reader["Description"].ToString();
+                    book.AuthorId = Guid.TryParse(reader[3].ToString(), out var result) ? result : null;
                 }
                 if (book == null)
                 {
@@ -100,6 +102,7 @@ namespace Introduction.Repository
 
         }
 
+        //ne radi
         public bool PutBookById(Guid id, Book book)
         {
             try
@@ -107,22 +110,38 @@ namespace Introduction.Repository
                 StringBuilder stringBuilder = new StringBuilder();
 
                 using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
-                var commandText = $"UPDATE \"Book\" SET";
-                using var command = new NpgsqlCommand(commandText, connection);
+                stringBuilder.Append("UPDATE \"Book\" SET ");
+
+                using var command = new NpgsqlCommand();
 
                 if (book.Title != null)
                 {
-                    stringBuilder.Append("Title\"=@title,");
+                    stringBuilder.Append("\"Title\"=@title, ");
                     command.Parameters.AddWithValue("@title", book.Title);
                 }
-                
+
                 if (book.Description != null)
                 {
-                    stringBuilder.Append("Description\"=@description,");
+                    stringBuilder.Append("\"Description\"=@description, ");
                     command.Parameters.AddWithValue("@description", book.Description);
                 }
 
-                stringBuilder.Append("\"WHERE\"Id\"=@id;");
+                if (book.AuthorId != null)
+                {
+                    stringBuilder.Append("\"AuthorId\"=@authorId, ");
+                    command.Parameters.AddWithValue("@authorId", book.AuthorId);
+                }
+
+                if (stringBuilder.ToString().EndsWith(", "))
+                {
+                    stringBuilder.Length -= 2;
+                }
+
+                stringBuilder.Append(" WHERE \"Id\"=@id;");
+                command.Parameters.AddWithValue("@id", id);
+
+                command.CommandText = stringBuilder.ToString();
+                command.Connection = connection;
 
                 connection.Open();
                 var numberOfCommits = command.ExecuteNonQuery();

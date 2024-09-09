@@ -1,4 +1,8 @@
-﻿using Introduction.Repository.Common;
+﻿using Introduction.Model;
+using Introduction.Repository.Common;
+using Microsoft.AspNetCore.Mvc;
+using Npgsql;
+using System.Text;
 
 namespace Introduction.Repository
 {
@@ -9,5 +13,151 @@ namespace Introduction.Repository
         "Password=postgres;" +
         "Database=postgres";
 
+        public bool PostAuthor(Author author)
+        {
+            try
+            {
+                using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
+                string commandText = $"INSERT INTO\"Author\"VALUES(@id, @firstName, @lastName, @DOB);";
+                using var command = new NpgsqlCommand(commandText, connection);
+
+                command.Parameters.AddWithValue("@id", NpgsqlTypes.NpgsqlDbType.Uuid, Guid.NewGuid());
+                command.Parameters.AddWithValue("@firstName", author.FirstName);
+                command.Parameters.AddWithValue("@lastName", author.LastName);
+                command.Parameters.AddWithValue("@DOB", author.DOB);
+
+                connection.Open();
+                var numberOfCommits = command.ExecuteNonQuery();
+                connection.Close();
+
+                if (numberOfCommits == 0)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public bool DeleteAuthorById(Guid id)
+        {
+            try
+            {
+                using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
+                var commandText = "DELETE FROM\"Author\"WHERE\"Id\"=@id;";
+                using var command = new NpgsqlCommand(commandText, connection);
+
+                command.Parameters.AddWithValue("@id", id);
+
+                connection.Open();
+                var numberOfCommits = command.ExecuteNonQuery();
+                connection.Close();
+
+                if (numberOfCommits == 0)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public bool GetAuthorById(Guid id)
+        {
+            try
+            {
+                var author = new Author();
+                using var connection = new NpgsqlConnection(connectionString);
+                var commandText = "SELECT * FROM \"Author\" WHERE \"Id\" = @id;";
+                using var command = new NpgsqlCommand(commandText, connection);
+                command.Parameters.AddWithValue("@id", id);
+                connection.Open();
+                using NpgsqlDataReader reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+
+                    reader.Read();
+                    author.Id = Guid.Parse(reader[0].ToString());
+                    author.FirstName = reader[1].ToString();
+                    author.LastName = reader["LastName"].ToString();
+                    author.DOB = Convert.ToDateTime(reader[3].ToString());
+
+                }
+                if (author == null)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        //ne radi
+        public bool PutAuthorById(Guid id, Author author)
+        {
+            try
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+
+                using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
+                stringBuilder.Append("UPDATE \"Author\" SET ");
+
+                using var command = new NpgsqlCommand();
+
+                if (author.FirstName != null)
+                {
+                    stringBuilder.Append("\"FirstName\"=@firstName, ");
+                    command.Parameters.AddWithValue("@firstName", author.FirstName);
+                }
+
+                if (author.LastName != null)
+                {
+                    stringBuilder.Append("\"LastName\"=@lastName, ");
+                    command.Parameters.AddWithValue("@lastName", author.LastName);
+                }
+
+                if (author.DOB != null)
+                {
+                    stringBuilder.Append("\"DOB\"=@dob, ");
+                    command.Parameters.AddWithValue("@dob", author.DOB);
+                }
+
+                if (stringBuilder.ToString().EndsWith(", "))
+                {
+                    stringBuilder.Length -= 2;
+                }
+
+                stringBuilder.Append(" WHERE \"Id\"=@id;");
+                command.Parameters.AddWithValue("@id", id);
+
+                command.CommandText = stringBuilder.ToString();
+                command.Connection = connection;
+
+                connection.Open();
+                var numberOfCommits = command.ExecuteNonQuery();
+                connection.Close();
+
+                if (numberOfCommits == 0)
+                {
+                    return false;
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
     }
 }
+

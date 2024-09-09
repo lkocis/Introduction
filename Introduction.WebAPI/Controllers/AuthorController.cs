@@ -1,4 +1,5 @@
 ﻿using Introduction.Model;
+using Introduction.Service;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using NpgsqlTypes;
@@ -21,21 +22,10 @@ namespace Introduction.WebAPI.Controllers
         {
             try 
             {
-                using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
-                string commandText = $"INSERT INTO\"Author\"VALUES(@id, @firstName, @lastName, @DOB, @bookId);";
-                using var command = new NpgsqlCommand(commandText, connection);
+                AuthorService authorService = new AuthorService();
+                bool checker = authorService.PostAuthor(author);
 
-                command.Parameters.AddWithValue("@id", NpgsqlTypes.NpgsqlDbType.Uuid, Guid.NewGuid());
-                command.Parameters.AddWithValue("@firstName", author.FirstName);
-                command.Parameters.AddWithValue("@lastName", author.LastName);
-                command.Parameters.AddWithValue("@DOB", author.DOB);
-                command.Parameters.AddWithValue("@bookId", NpgsqlTypes.NpgsqlDbType.Uuid, author.BookId);
-
-                connection.Open();
-                var numberOfCommits = command.ExecuteNonQuery();
-                connection.Close();
-
-                if (numberOfCommits == 0)
+                if (checker == false)
                 {
                     return BadRequest(); 
                 }
@@ -53,17 +43,10 @@ namespace Introduction.WebAPI.Controllers
         {
             try
             {
-                using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
-                var commandText = "DELETE FROM\"Author\"WHERE\"Id\"=@id;";
-                using var command = new NpgsqlCommand(commandText, connection);
+                AuthorService authorService = new AuthorService();
+                bool checker = authorService.DeleteAuthorById(id);
 
-                command.Parameters.AddWithValue("@id", id);
-
-                connection.Open();
-                var numberOfCommits = command.ExecuteNonQuery();
-                connection.Close();
-
-                if (numberOfCommits == 0)
+                if (checker == false)
                 {
                     return NotFound();
                 }
@@ -77,22 +60,13 @@ namespace Introduction.WebAPI.Controllers
 
         [HttpPut]
         [Route("PutAuthorById/{id}/{dob}")]
-        public ActionResult PutAuthorById(Guid id, DateOnly dob)
+        public ActionResult PutAuthorById(Guid id, [FromBody] Author author)
         {
             try
             {
-                using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
-                var commandText = $"UPDATE\"Author\"SET\"DOB\"=@dob WHERE\"Id\"=@id;";
-                using var command = new NpgsqlCommand(commandText, connection);
-
-                command.Parameters.AddWithValue("@id", id);
-                command.Parameters.AddWithValue("@dob", dob);
-
-                connection.Open();
-                var numberOfCommits = command.ExecuteNonQuery();
-                connection.Close();
-
-                if (numberOfCommits == 0)
+                AuthorService authorService = new AuthorService();
+                bool checker = authorService.PutAuthorById(id, author);
+                if (checker == false)
                 {
                     return NotFound();
                 }
@@ -107,32 +81,18 @@ namespace Introduction.WebAPI.Controllers
 
         [HttpGet]
         [Route("GetAuthorById/{id}")]
-        public ActionResult Get(Guid id)
+        public ActionResult GetAuthorById(Guid id)
         {
             try
             {
-                var author = new Author();
-                using var connection = new NpgsqlConnection(connectionString);
-                var commandText = "SELECT * FROM \"Author\" WHERE \"Id\" = @id;";
-                using var command = new NpgsqlCommand(commandText, connection);
-                command.Parameters.AddWithValue("@id", id);
-                connection.Open();
-                using NpgsqlDataReader reader = command.ExecuteReader();
-                if (reader.HasRows)
-                {
+                AuthorService authorService = new AuthorService();
+                bool checker = authorService.GetAuthorById(id);
 
-                    reader.Read();
-                    author.Id = Guid.Parse(reader[0].ToString());
-                    author.FirstName = reader[1].ToString();
-                    author.LastName = reader["LastName"].ToString();
-                    author.DOB = Convert.ToDateTime(reader[3].ToString());
-                    author.BookId = Guid.TryParse(reader[4].ToString(), out var result) ? result : null;
-                }
-                if (author == null)
+                if (checker == false)
                 {
                     return NotFound();
                 }
-                return Ok(author);
+                return Ok("Succesfully deleted!");
             }
             catch (Exception ex)
             {
