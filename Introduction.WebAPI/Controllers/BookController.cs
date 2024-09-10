@@ -1,6 +1,6 @@
 ﻿using Introduction.Model;
 using Introduction.Service;
-
+using Introduction.Service.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Introduction.WebAPI.Controllers
@@ -9,15 +9,22 @@ namespace Introduction.WebAPI.Controllers
     [Route("[controller]")]
     public class BookController: ControllerBase
     {
+        protected IBookService _bookService;
+
+        public BookController(IBookService bookService)
+        {
+            _bookService = bookService;
+        }
+
+
         [HttpPost]
         [Route("PostBook/")]
         public async Task<ActionResult> PostBookAsync([FromBody] Book book)
         {
             try
             {
-                BookService bookService = new BookService();
-                var checker = await bookService.PostBookAsync(book);
-                if ( checker == false)
+                var isSuccessful = await _bookService.PostBookAsync(book);
+                if (!isSuccessful)
                     return BadRequest("Book not posted");
                 return Ok();
             }
@@ -33,9 +40,8 @@ namespace Introduction.WebAPI.Controllers
         {
             try
             {
-                BookService bookService = new BookService();
-                var checker = await bookService.DeleteBookByIdAsync(id);
-                if (checker == false)
+                var isSuccessful = await _bookService.DeleteBookByIdAsync(id);
+                if (!isSuccessful)
                 {
                     return NotFound();
                 }
@@ -53,13 +59,12 @@ namespace Introduction.WebAPI.Controllers
         {
             try
             {
-                BookService bookService = new BookService();
-                var checker = await bookService.GetBookByIdAsync(id);
-                if(checker == false)
+                Book book = await _bookService.GetBookByIdAsync(id);
+                if(book == null)
                 {
                     return NotFound();
                 }
-                return Ok("Ok");
+                return Ok(book);
             }
             catch (Exception ex)
             {
@@ -73,10 +78,9 @@ namespace Introduction.WebAPI.Controllers
         {
             try
             {
-                BookService bookService = new BookService();
-                var checker = await bookService.PutBookByIdAsync(id, book);
+                var isSuccessful = await _bookService.PutBookByIdAsync(id, book);
 
-                if(checker == false)
+                if(!isSuccessful)
                 {
                     return NotFound();
                 }

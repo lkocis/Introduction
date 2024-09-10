@@ -69,37 +69,29 @@ namespace Introduction.Repository
             }
         }
 
-        public async Task<bool> GetBookByIdAsync(Guid id)
+        public async Task<Book> GetBookByIdAsync(Guid id)
         {
-            try
-            {
-                Book book = new Book();
-                using var connection = new NpgsqlConnection(connectionString);
-                var commandText = "SELECT * FROM \"Book\" WHERE \"Id\"= @id;";
-                using var command = new NpgsqlCommand(commandText, connection);
-                command.Parameters.AddWithValue("@id", id);
-                connection.Open();
+            Book book = new Book();
+            using var connection = new NpgsqlConnection(connectionString);
+            var commandText = "SELECT * FROM \"Book\"WHERE \"Id\"=@id;";
+            using var command = new NpgsqlCommand(commandText, connection);
+            command.Parameters.AddWithValue("@id", id);
+            connection.Open();
 
-                using NpgsqlDataReader reader = await command.ExecuteReaderAsync();
-                if (reader.HasRows)
-                {
-                    reader.Read();
-                    book.Id = Guid.Parse(reader[0].ToString());
-                    book.Title = reader[1].ToString();
-                    book.Description = reader["Description"].ToString();
-                    book.AuthorId = Guid.TryParse(reader[3].ToString(), out var result) ? result : null;
-                }
-                if (book == null)
-                {
-                    return false;
-                }
-                return true;
-            }
-            catch (Exception ex)
+            using NpgsqlDataReader reader = await command.ExecuteReaderAsync();
+            if (reader.HasRows)
             {
-                return false;
+                reader.Read();
+                book.Id = Guid.Parse(reader[0].ToString());
+                book.Title = reader[1].ToString();
+                book.Description = reader["Description"].ToString();
+                book.AuthorId = Guid.TryParse(reader[3].ToString(), out var result) ? result : null;
             }
-
+            if (book == null)
+            {
+                return book;
+            }
+            return book;
         }
 
   
@@ -158,5 +150,7 @@ namespace Introduction.Repository
                 return false;
             }
         }
+
+       
     }
 }

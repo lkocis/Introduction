@@ -6,7 +6,8 @@ namespace Introduction.Repository.Common
     {
         Task<bool> PostAuthorAsync(Author author);
         Task<bool> DeleteAuthorByIdAsync(Guid id);
-        Task<bool> GetAuthorByIdAsync(Guid id);
+        Task<Author> GetAuthorByIdAsync(Guid id);
         Task<bool> PutAuthorByIdAsync(Guid id, Author author);
+        Task<List<Author>> GetAllAsync();
     }
 }

@@ -1,55 +1,46 @@
 ﻿using Introduction.Model;
 using Introduction.Repository;
+using Introduction.Repository.Common;
 using Introduction.Service.Common;
 
 namespace Introduction.Service
 {
     public class BookService : IBookService
     {
+        protected IBookRepository _bookRepository;
+
+        public BookService(IBookRepository bookRepository)
+        {
+            _bookRepository = bookRepository;
+        }
 
         public async Task<bool> PostBookAsync(Book book)
         {
-            BookRepository bookRepository = new BookRepository();
-            bool checker = await bookRepository.PostBookAsync(book);
-            if (checker == false)
-            {
-                return false;
-            }
-            return true;
+            bool isSuccessful = await _bookRepository.PostBookAsync(book);
+            
+            return isSuccessful;
 
         }
 
         public async Task<bool> DeleteBookByIdAsync(Guid id)
         {
-            BookRepository bookRepository = new BookRepository();
-            bool checker = await bookRepository.DeleteBookByIdAsync(id);
-            if (checker == false)
-            {
-                return false;
-            }
-            return true;
+            bool isSuccessful = await _bookRepository.DeleteBookByIdAsync(id);
+            
+            return isSuccessful;
         }
 
-        public async Task<bool> GetBookByIdAsync(Guid id)
+        public async Task<Book> GetBookByIdAsync(Guid id)
         {
-            BookRepository bookRepository = new BookRepository();
-            bool checker = await bookRepository.GetBookByIdAsync(id);
-            if (checker == false)
-            {
-               return false;
-            }  
-            return true;
+            Book book = await _bookRepository.GetBookByIdAsync(id);
+            
+            return book;
         }
 
         public async Task<bool> PutBookByIdAsync(Guid id, Book book)
         {
-            BookRepository bookRepository = new BookRepository();
-            bool checker = await bookRepository.PutBookByIdAsync(id, book);
-            if (checker == false)
-            {
-                return false;
-            }
-            return true;
+            bool isSuccessful = await _bookRepository.PutBookByIdAsync(id, book);
+            
+            return isSuccessful;
         }
     }
 }

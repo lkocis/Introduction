@@ -1,5 +1,7 @@
 ﻿using Introduction.Model;
 using Introduction.Service;
+using Introduction.Service.Common;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using NpgsqlTypes;
@@ -11,10 +13,12 @@ namespace Introduction.WebAPI.Controllers
     [Route("[controller]")]
     public class AuthorController : ControllerBase
     {
-        private const string connectionString = "Host=localhost:5432;" +
-        "Username=postgres;" +
-        "Password=postgres;" +
-        "Database=postgres";
+        protected IAuthorService _authorService;
+
+        public AuthorController(IAuthorService authorService)
+        {
+            _authorService = authorService;
+        }
 
         [HttpPost]
         [Route("PostAuthor/")]
@@ -22,10 +26,9 @@ namespace Introduction.WebAPI.Controllers
         {
             try 
             {
-                AuthorService authorService = new AuthorService();
-                bool checker = await authorService.PostAuthorAsync(author);
+                bool isSuccessful = await _authorService.PostAuthorAsync(author);
 
-                if (checker == false)
+                if (!isSuccessful)
                 {
                     return BadRequest(); 
                 }
@@ -43,10 +46,9 @@ namespace Introduction.WebAPI.Controllers
         {
             try
             {
-                AuthorService authorService = new AuthorService();
-                bool checker = await authorService.DeleteAuthorByIdAsync(id);
+                bool isSuccessful = await _authorService.DeleteAuthorByIdAsync(id);
 
-                if (checker == false)
+                if (!isSuccessful)
                 {
                     return NotFound();
                 }
@@ -59,14 +61,13 @@ namespace Introduction.WebAPI.Controllers
         }
 
         [HttpPut]
-        [Route("PutAuthorById/{id}/{dob}")]
+        [Route("PutAuthorById/{id}")]
         public async Task<ActionResult> PutAuthorByIdAsync(Guid id, [FromBody] Author author)
         {
             try
             {
-                AuthorService authorService = new AuthorService();
-                bool checker = await authorService.PutAuthorByIdAsync(id, author);
-                if (checker == false)
+                bool isSuccessful = await _authorService.PutAuthorByIdAsync(id, author);
+                if (!isSuccessful)
                 {
                     return NotFound();
                 }
@@ -85,14 +86,33 @@ namespace Introduction.WebAPI.Controllers
         {
             try
             {
-                AuthorService authorService = new AuthorService();
-                bool checker = await authorService.GetAuthorByIdAsync(id);
+                Author author = await _authorService.GetAuthorByIdAsync(id);
 
-                if (checker == false)
+                if (author == null)
                 {
                     return NotFound();
                 }
-                return Ok("Succesfully deleted!");
+                return Ok(author);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetAll")]
+        public async Task<ActionResult> GetAllAsync()
+        {
+            try
+            {
+                List<Author> authors = await _authorService.GetAllAsync();
+
+                if (authors == null)
+                {
+                    return NotFound();
+                }
+                return Ok(authors);
             }
             catch (Exception ex)
             {

@@ -68,40 +68,29 @@ namespace Introduction.Repository
             }
         }
 
-        public async Task<bool> GetAuthorByIdAsync(Guid id)
+        public async Task<Author> GetAuthorByIdAsync(Guid id)
         {
-            try
+            var author = new Author();
+            using var connection = new NpgsqlConnection(connectionString);
+            var commandText = "SELECT * FROM \"Author\" WHERE \"Id\" = @id;";
+            using var command = new NpgsqlCommand(commandText, connection);
+            command.Parameters.AddWithValue("@id", id);
+            connection.Open();
+            using NpgsqlDataReader reader = await command.ExecuteReaderAsync();
+            if (reader.HasRows)
             {
-                var author = new Author();
-                using var connection = new NpgsqlConnection(connectionString);
-                var commandText = "SELECT * FROM \"Author\" WHERE \"Id\" = @id;";
-                using var command = new NpgsqlCommand(commandText, connection);
-                command.Parameters.AddWithValue("@id", id);
-                connection.Open();
-                using NpgsqlDataReader reader = await command.ExecuteReaderAsync();
-                if (reader.HasRows)
-                {
 
-                    reader.Read();
-                    author.Id = Guid.Parse(reader[0].ToString());
-                    author.FirstName = reader[1].ToString();
-                    author.LastName = reader["LastName"].ToString();
-                    author.DOB = Convert.ToDateTime(reader[3].ToString());
+                reader.Read();
+                author.Id = Guid.Parse(reader[0].ToString());
+                author.FirstName = reader[1].ToString();
+                author.LastName = reader["LastName"].ToString();
+                author.DOB = Convert.ToDateTime(reader[3].ToString());
 
-                }
-                if (author == null)
-                {
-                    return false;
-                }
-                return true;
             }
-            catch (Exception ex)
-            {
-                return false;
-            }
+
+            return author;
         }
 
-        //ne radi
         public async Task<bool> PutAuthorByIdAsync(Guid id, Author author)
         {
             try
@@ -158,6 +147,45 @@ namespace Introduction.Repository
             }
 
         }
+
+        public async Task<List<Author>> GetAllAsync()
+        {
+
+            Author author = new Author();
+            Book book = new Book();
+            List<Author> authors = new List<Author>();
+            using var connection = new NpgsqlConnection(connectionString);
+            var commandText = $"SELECT * FROM \"Book\" LEFT JOIN \"Author\" ON \"Book\".\"AuthorId\" = \"Author\".\"Id\";";
+            using var command = new NpgsqlCommand(commandText, connection);
+
+            connection.Open();
+            using NpgsqlDataReader reader = await command.ExecuteReaderAsync();
+
+            if (reader.HasRows)
+            {
+                while (await reader.ReadAsync())
+                {
+                    
+                    author.Id = Guid.Parse(reader[0].ToString());
+                    author.FirstName = reader[1].ToString();
+                    author.LastName = reader["LastName"].ToString();
+                    author.DOB = Convert.ToDateTime(reader[3].ToString());
+
+                    book.Id = Guid.Parse(reader[4].ToString());
+                    book.Title = reader[5].ToString();
+                    book.Description = reader["Description"].ToString();
+                    book.AuthorId = Guid.TryParse(reader[7].ToString(), out var result) ? result : null;
+                    authors.Add(author);
+                }
+            }
+
+            if (authors == null)
+            {
+                return null;
+            }
+            return authors;
+        }
+
     }
 }
 

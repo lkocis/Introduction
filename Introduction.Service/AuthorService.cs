@@ -1,54 +1,53 @@
 ﻿
 using Introduction.Model;
 using Introduction.Repository;
+using Introduction.Repository.Common;
 using Introduction.Service.Common;
 
 namespace Introduction.Service
 {
     public class AuthorService : IAuthorService
     {
+        protected IAuthorRepository _authorRepository;
+
+        public AuthorService(IAuthorRepository authorRepository)
+        {
+            _authorRepository = authorRepository;
+        }
+
         public async Task<bool> PostAuthorAsync(Author author)
         {
-            AuthorRepository authorRepository = new AuthorRepository();
-            bool checker = await authorRepository.PostAuthorAsync(author);
-            if (checker == false)
-            {
-                return false;
-            }
-            return true;
+            bool isSuccessful = await _authorRepository.PostAuthorAsync(author);
+            
+            return isSuccessful;
         }
 
         public async Task<bool> DeleteAuthorByIdAsync(Guid id)
         {
-            AuthorRepository authorRepository = new AuthorRepository();
-            bool checker = await authorRepository.DeleteAuthorByIdAsync(id);
-            if (checker == false)
-            {
-                return false;
-            }
-            return true;
+            bool isSuccessful = await _authorRepository.DeleteAuthorByIdAsync(id);
+           
+            return isSuccessful;
         }
 
-        public async Task<bool> GetAuthorByIdAsync(Guid id)
-        {
-            AuthorRepository authorRepository = new AuthorRepository();
-            bool checker = await authorRepository.GetAuthorByIdAsync(id);
-            if (checker == false)
-            {
-                return false;
-            }
-            return true;
+        public async Task<Author> GetAuthorByIdAsync(Guid id)
+        { 
+            Author author = await _authorRepository.GetAuthorByIdAsync(id);
+            
+            return author;
         }
 
         public async Task<bool> PutAuthorByIdAsync(Guid id, Author author)
         {
-            AuthorRepository authorRepository = new AuthorRepository();
-            bool checker = await authorRepository.PutAuthorByIdAsync(id, author);
-            if (checker == false)
-            {
-                return false;
-            }
-            return true;
+            bool isSuccessful = await _authorRepository.PutAuthorByIdAsync(id, author);
+            
+            return isSuccessful;
+        }
+
+        public async Task<List<Author>> GetAllAsync()
+        {
+            List<Author> authors = await _authorRepository.GetAllAsync();
+
+            return authors;
         }
     }
 }

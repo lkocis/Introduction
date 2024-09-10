@@ -6,7 +6,7 @@ namespace Introduction.Repository.Common
     {
         Task<bool> PostBookAsync(Book book);
         Task<bool> DeleteBookByIdAsync(Guid id);
-        Task<bool> GetBookByIdAsync(Guid id);
+        Task<Book> GetBookByIdAsync(Guid id);
         Task<bool> PutBookByIdAsync(Guid id, Book book);
     }
 }
