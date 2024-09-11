@@ -1,8 +1,11 @@
-﻿using Introduction.Model;
+﻿using Introduction.Common;
+using Introduction.Model;
 using Introduction.Service;
 using Introduction.Service.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.OpenApi.MicrosoftExtensions;
 using Npgsql;
 using NpgsqlTypes;
 using System.Security.Cryptography.X509Certificates;
@@ -102,11 +105,26 @@ namespace Introduction.WebAPI.Controllers
 
         [HttpGet]
         [Route("GetAll")]
-        public async Task<ActionResult> GetAllAsync()
+        public async Task<ActionResult> GetAllAsync(string searchQuery="", Guid? authorId=null, string? firstName="", string? lastName="", DateTime? dateOfBirth=null, int pageSize=3, int pageNumber=1, string sortBy="Id", string sortDirection="ASC")
         {
             try
             {
-                List<Author> authors = await _authorService.GetAllAsync();
+                AuthorFilter filter = new AuthorFilter();
+                filter.SearchQuery = searchQuery;
+                filter.AuthorId = authorId;
+                filter.FirstName = firstName;
+                filter.LastName = lastName;
+                filter.DateOfBirth = dateOfBirth;
+
+                Paging paging = new Paging();
+                paging.PageSize = pageSize;
+                paging.PageNumber = pageNumber;
+
+                Sorting sorting = new Sorting();
+                sorting.SortBy = sortBy;
+                sorting.SortDirection = sortDirection;
+
+                List<Author> authors = await _authorService.GetAllAsync(filter, paging, sorting);
 
                 if (authors == null)
                 {

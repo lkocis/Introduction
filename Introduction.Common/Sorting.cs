@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Introduction.Common
 {
-    internal class Sorting
+    public class Sorting
     {
+        public string SortBy {  get; set; }
+        public string SortDirection {  get; set; }
     }
 }

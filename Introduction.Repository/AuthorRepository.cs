@@ -1,7 +1,9 @@
-﻿using Introduction.Model;
+﻿using Introduction.Common;
+using Introduction.Model;
 using Introduction.Repository.Common;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
+using System.Buffers;
 using System.Text;
 
 namespace Introduction.Repository
@@ -166,11 +168,14 @@ namespace Introduction.Repository
 
         }
 
-        public async Task<List<Author>> GetAllAsync()
+        public async Task<List<Author>> GetAllAsync(AuthorFilter filter, Paging paging, Sorting sorting)
         {
             List<Author> authors = new List<Author>();
+            StringBuilder sb = new StringBuilder();
             using var connection = new NpgsqlConnection(connectionString);
-            var commandText = $"SELECT b.\"Id\" AS \"BookId\", " +
+            using var command = new NpgsqlCommand();
+
+            sb.Append($"SELECT b.\"Id\" AS \"BookId\", " +
                                 "b.\"Title\" AS \"BookTitle\", " +
                                 "b.\"Description\" AS \"BookDescription\", " +
                                 "b.\"AuthorId\" AS \"AuthorId\", " +
@@ -179,9 +184,39 @@ namespace Introduction.Repository
                                 "a.\"LastName\" AS \"LastName\", " +
                                 "a.\"DOB\" AS \"DOB\" " +
                                 "FROM \"Book\" b " +
-                                "LEFT JOIN \"Author\" a ON b.\"AuthorId\" = a.\"Id\";";
+                                "LEFT JOIN \"Author\" a ON b.\"AuthorId\" = a.\"Id\" WHERE 1=1"
+            );
 
-            using var command = new NpgsqlCommand(commandText, connection);
+
+            if (filter != null)
+            {
+                if (!string.IsNullOrWhiteSpace(filter.SearchQuery))
+                {
+                    sb.Append(" AND \"a\".\"FirstName\" LIKE @SearchQuery");
+                    command.Parameters.AddWithValue("@SearchQuery", $"%{filter.SearchQuery}%");
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter.FirstName))
+                {
+                    sb.Append(" AND \"a\".\"FirstName\" LIKE @FirstName");
+                    command.Parameters.AddWithValue("@FirstName", $"%{filter.FirstName}%");
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter.LastName))
+                {
+                    sb.Append(" AND \"a\".\"LastName\" LIKE @LastName");
+                    command.Parameters.AddWithValue("@LastName", $"%{filter.LastName}%");
+                }
+
+                if (!string.IsNullOrWhiteSpace(filter.DateOfBirth.ToString()))
+                {
+                    sb.Append(" AND \"a\".\"DOB\" LIKE @DateOfBirth");
+                    command.Parameters.AddWithValue("@DateOfBirth", $"%{filter.DateOfBirth}%");
+                }
+            }
+
+            command.CommandText = sb.ToString();
+            command.Connection = connection;
 
             connection.Open();
             using NpgsqlDataReader reader = await command.ExecuteReaderAsync();
