@@ -72,22 +72,40 @@ namespace Introduction.Repository
         {
             var author = new Author();
             using var connection = new NpgsqlConnection(connectionString);
-            var commandText = "SELECT * FROM \"Author\" WHERE \"Id\" = @id;";
+            var commandText = $"SELECT a.\"Id\" AS \"AuthorsId\", " +
+                                "a.\"FirstName\" AS \"FirstName\", " +
+                                "a.\"LastName\" AS \"LastName\", " +
+                                "a.\"DOB\" AS \"DOB\", " +
+                                "b.\"Id\" AS \"BookId\", " +
+                                "b.\"Title\" AS \"BookTitle\", " +
+                                "b.\"Description\" AS \"BookDescription\", " +
+                                "b.\"AuthorId\" AS \"AuthorId\" " +
+                                "FROM \"Author\" a " +
+                                "RIGHT JOIN \"Book\" b ON b.\"AuthorId\" = a.\"Id\" " +
+                                "WHERE a.\"Id\"=@id;";
+
             using var command = new NpgsqlCommand(commandText, connection);
             command.Parameters.AddWithValue("@id", id);
             connection.Open();
             using NpgsqlDataReader reader = await command.ExecuteReaderAsync();
             if (reader.HasRows)
             {
+                while(await reader.ReadAsync())
+                {
+                    author.Id = Guid.Parse(reader["AuthorsId"].ToString());
+                    author.FirstName = reader["FirstName"].ToString();
+                    author.LastName = reader["LastName"].ToString();
+                    author.DOB = Convert.ToDateTime(reader["DOB"].ToString());
 
-                reader.Read();
-                author.Id = Guid.Parse(reader[0].ToString());
-                author.FirstName = reader[1].ToString();
-                author.LastName = reader["LastName"].ToString();
-                author.DOB = Convert.ToDateTime(reader[3].ToString());
-
+                    Book book = new Book();
+                    book.Id = Guid.Parse(reader["BookId"].ToString());
+                    book.Title = reader["BookTitle"].ToString();
+                    book.Description = reader["BookDescription"].ToString();
+                    book.AuthorId = Guid.TryParse(reader["AuthorId"].ToString(), out var result) ? result : null;
+                    author.Books.Add(book);
+                }
+                
             }
-
             return author;
         }
 
@@ -114,7 +132,7 @@ namespace Introduction.Repository
                     command.Parameters.AddWithValue("@lastName", author.LastName);
                 }
 
-                if (author.DOB != null)
+                if (!DateTime.Equals(author.DOB, "0001-01-01"))
                 {
                     stringBuilder.Append("\"DOB\"=@dob, ");
                     command.Parameters.AddWithValue("@dob", author.DOB);
@@ -132,7 +150,7 @@ namespace Introduction.Repository
                 command.Connection = connection;
 
                 connection.Open();
-                var numberOfCommits = command.ExecuteNonQuery();
+                var numberOfCommits = await command.ExecuteNonQueryAsync();
                 connection.Close();
 
                 if (numberOfCommits == 0)
@@ -150,12 +168,19 @@ namespace Introduction.Repository
 
         public async Task<List<Author>> GetAllAsync()
         {
-
-            Author author = new Author();
-            Book book = new Book();
             List<Author> authors = new List<Author>();
             using var connection = new NpgsqlConnection(connectionString);
-            var commandText = $"SELECT * FROM \"Book\" LEFT JOIN \"Author\" ON \"Book\".\"AuthorId\" = \"Author\".\"Id\";";
+            var commandText = $"SELECT b.\"Id\" AS \"BookId\", " +
+                                "b.\"Title\" AS \"BookTitle\", " +
+                                "b.\"Description\" AS \"BookDescription\", " +
+                                "b.\"AuthorId\" AS \"AuthorId\", " +
+                                "a.\"Id\" AS \"IdOfAuthor\", " +
+                                "a.\"FirstName\" AS \"FirstName\", " +
+                                "a.\"LastName\" AS \"LastName\", " +
+                                "a.\"DOB\" AS \"DOB\" " +
+                                "FROM \"Book\" b " +
+                                "LEFT JOIN \"Author\" a ON b.\"AuthorId\" = a.\"Id\";";
+
             using var command = new NpgsqlCommand(commandText, connection);
 
             connection.Open();
@@ -165,17 +190,20 @@ namespace Introduction.Repository
             {
                 while (await reader.ReadAsync())
                 {
-                    
-                    author.Id = Guid.Parse(reader[0].ToString());
-                    author.FirstName = reader[1].ToString();
-                    author.LastName = reader["LastName"].ToString();
-                    author.DOB = Convert.ToDateTime(reader[3].ToString());
+                    Book book = new Book();
+                    book.Id = Guid.Parse(reader["BookId"].ToString());
+                    book.Title = reader["BookTitle"].ToString();
+                    book.Description = reader["BookDescription"].ToString();
+                    book.AuthorId = Guid.TryParse(reader["AuthorId"].ToString(), out var result) ? result : null;
 
-                    book.Id = Guid.Parse(reader[4].ToString());
-                    book.Title = reader[5].ToString();
-                    book.Description = reader["Description"].ToString();
-                    book.AuthorId = Guid.TryParse(reader[7].ToString(), out var result) ? result : null;
+                    Author author = new Author();
+                    author.Id = Guid.Parse(reader["IdOfAuthor"].ToString());
+                    author.FirstName = reader["FirstName"].ToString();
+                    author.LastName = reader["LastName"].ToString();
+                    author.DOB = Convert.ToDateTime(reader["DOB"].ToString());
+
                     authors.Add(author);
+                    author.Books.Add(book);
                 }
             }
 

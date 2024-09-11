@@ -8,15 +8,6 @@
         public string? LastName { get; set; }
         public DateTime DOB { get; set; }
 
-        public Author(Guid id, string firstName, string lastName, DateTime dob)
-        {
-            FirstName = firstName;
-            LastName = lastName;
-            Id = id;
-            DOB = dob;
-        }
-
-        public Author()
-        { }
+        public List<Book> Books { get; set; } = new List<Book>();
     }
 }
