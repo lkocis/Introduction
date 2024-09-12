@@ -215,6 +215,14 @@ namespace Introduction.Repository
                 }
             }
 
+            if(paging != null)
+            {
+                if(paging.PageNumber != 0)
+                {
+                    
+                }
+            }
+
             command.CommandText = sb.ToString();
             command.Connection = connection;
 
