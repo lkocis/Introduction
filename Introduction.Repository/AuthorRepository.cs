@@ -217,10 +217,21 @@ namespace Introduction.Repository
 
             if(paging != null)
             {
-                if(paging.PageNumber != 0)
+                if (paging.PageNumber > 0)
                 {
-                    
+                    int authorsPerPage = paging.PageSize;
+                    int offsetValue = (paging.PageNumber - 1) * authorsPerPage;
+
+                    sb.Append(" LIMIT @authorsPerPage OFFSET @offsetValue");
+
+                    command.Parameters.AddWithValue("@authorsPerPage", authorsPerPage);
+                    command.Parameters.AddWithValue("@offsetValue", offsetValue);
                 }
+            }
+
+            if(sorting != null)
+            {
+                
             }
 
             command.CommandText = sb.ToString();
