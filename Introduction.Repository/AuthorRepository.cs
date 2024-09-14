@@ -4,6 +4,7 @@ using Introduction.Repository.Common;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using System.Buffers;
+using System.Globalization;
 using System.Text;
 
 namespace Introduction.Repository
@@ -231,7 +232,26 @@ namespace Introduction.Repository
 
             if(sorting != null)
             {
-                
+                if (!string.IsNullOrWhiteSpace(sorting.SortBy))
+                {
+                    string sortBy = sorting.SortBy.ToString();
+                    string sortingDirection = sorting.SortDirection == "DESC" ? "DESC" : "ASC";
+
+                    if(sortBy == "firstName")
+                    {
+                        sb.Append(" ORDER BY \"a\".\"FirstName\" {sortingDirection}");
+                    }
+
+                    if (sortBy == "lastName")
+                    {
+                        sb.Append(" ORDER BY \"a\".\"LastName\" {sortingDirection}");
+                    }
+
+                    if (sortBy == "dateOfBirth")
+                    {
+                        sb.Append(" ORDER BY \"a\".\"DOB\" {sortingDirection}");
+                    }
+                }
             }
 
             command.CommandText = sb.ToString();
