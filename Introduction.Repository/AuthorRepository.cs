@@ -185,7 +185,7 @@ namespace Introduction.Repository
                                 "a.\"LastName\" AS \"LastName\", " +
                                 "a.\"DOB\" AS \"DOB\" " +
                                 "FROM \"Book\" b " +
-                                "LEFT JOIN \"Author\" a ON b.\"AuthorId\" = a.\"Id\" WHERE 1=1"
+                                "LEFT JOIN \"Author\" a ON b.\"AuthorId\" = a.\"Id" //\" WHERE 1=1"
             );
 
 
@@ -216,45 +216,41 @@ namespace Introduction.Repository
                 }
             }
 
-            if(paging != null)
+            sb.Append(" WHERE 1=1 ");
+
+            if (!string.IsNullOrWhiteSpace(sorting.SortBy))
+            { 
+                sb.Append("ORDER BY ");
+                sb.Append($"a.\"{sorting.SortBy}\"");
+
+                if (!string.IsNullOrEmpty(sorting.SortDirection)
+                    && (string.Equals(sorting.SortDirection, "asc", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(sorting.SortDirection, "desc", StringComparison.OrdinalIgnoreCase)))
+                {
+                    sb.Append($" {sorting.SortDirection.ToUpper()} ");
+                }
+                else
+                {
+                    sb.Append(" ASC ");
+                }
+            }
+
+            if (paging != null)
             {
                 if (paging.PageNumber > 0)
                 {
                     int authorsPerPage = paging.PageSize;
                     int offsetValue = (paging.PageNumber - 1) * authorsPerPage;
 
-                    sb.Append(" LIMIT @authorsPerPage OFFSET @offsetValue");
+                    sb.Append(" LIMIT @authorsPerPage OFFSET @offsetValue;");
 
                     command.Parameters.AddWithValue("@authorsPerPage", authorsPerPage);
                     command.Parameters.AddWithValue("@offsetValue", offsetValue);
                 }
             }
 
-            if(sorting != null)
-            {
-                if (!string.IsNullOrWhiteSpace(sorting.SortBy))
-                {
-                    string sortBy = sorting.SortBy.ToString();
-                    string sortingDirection = sorting.SortDirection == "DESC" ? "DESC" : "ASC";
-
-                    if(sortBy == "firstName")
-                    {
-                        sb.Append(" ORDER BY \"a\".\"FirstName\" {sortingDirection}");
-                    }
-
-                    if (sortBy == "lastName")
-                    {
-                        sb.Append(" ORDER BY \"a\".\"LastName\" {sortingDirection}");
-                    }
-
-                    if (sortBy == "dateOfBirth")
-                    {
-                        sb.Append(" ORDER BY \"a\".\"DOB\" {sortingDirection}");
-                    }
-                }
-            }
-
             command.CommandText = sb.ToString();
+            Console.WriteLine(command.CommandText);
             command.Connection = connection;
 
             connection.Open();
