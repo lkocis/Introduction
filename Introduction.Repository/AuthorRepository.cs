@@ -185,7 +185,7 @@ namespace Introduction.Repository
                                 "a.\"LastName\" AS \"LastName\", " +
                                 "a.\"DOB\" AS \"DOB\" " +
                                 "FROM \"Book\" b " +
-                                "LEFT JOIN \"Author\" a ON b.\"AuthorId\" = a.\"Id\" WHERE 1=1"
+                                "LEFT JOIN \"Author\" a ON b.\"AuthorId\" = a.\"Id" //\" WHERE 1=1"
             );
 
 
@@ -216,24 +216,12 @@ namespace Introduction.Repository
                 }
             }
 
-            if(paging != null)
-            {
-                if (paging.PageNumber > 0)
-                {
-                    int authorsPerPage = paging.PageSize;
-                    int offsetValue = (paging.PageNumber - 1) * authorsPerPage;
-
-                    sb.Append(" LIMIT @authorsPerPage OFFSET @offsetValue");
-
-                    command.Parameters.AddWithValue("@authorsPerPage", authorsPerPage);
-                    command.Parameters.AddWithValue("@offsetValue", offsetValue);
-                }
-            }
+            sb.Append(" WHERE 1=1 ");
 
             if (!string.IsNullOrWhiteSpace(sorting.SortBy))
-            {
-                sb.Append(" ORDER BY ");
-                sb.Append($"\"{sorting.SortBy}\"");
+            { 
+                sb.Append("ORDER BY ");
+                sb.Append($"a.\"{sorting.SortBy}\"");
 
                 if (!string.IsNullOrEmpty(sorting.SortDirection)
                     && (string.Equals(sorting.SortDirection, "asc", StringComparison.OrdinalIgnoreCase)
@@ -247,7 +235,22 @@ namespace Introduction.Repository
                 }
             }
 
+            if (paging != null)
+            {
+                if (paging.PageNumber > 0)
+                {
+                    int authorsPerPage = paging.PageSize;
+                    int offsetValue = (paging.PageNumber - 1) * authorsPerPage;
+
+                    sb.Append(" LIMIT @authorsPerPage OFFSET @offsetValue;");
+
+                    command.Parameters.AddWithValue("@authorsPerPage", authorsPerPage);
+                    command.Parameters.AddWithValue("@offsetValue", offsetValue);
+                }
+            }
+
             command.CommandText = sb.ToString();
+            Console.WriteLine(command.CommandText);
             command.Connection = connection;
 
             connection.Open();
