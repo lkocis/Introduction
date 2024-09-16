@@ -9,6 +9,6 @@ namespace Introduction.Repository.Common
 {
     public interface IReservationRepository
     {
-        Task<bool> PostReservationInfo(Reservation reservation);
+        Task<Reservation> GetReservationInfo(Guid id);
     }
 }

@@ -36,9 +36,6 @@ internal class Program
         builder.Services.AddTransient<IRoleService, RoleService>();
         builder.Services.AddTransient<IEmailService, EmailService>();
 
-        builder.Services.AddTransient<SmtpClient>();
-       
-        
 
         var app = builder.Build();
 
