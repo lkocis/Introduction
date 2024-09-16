@@ -4,6 +4,13 @@ using Introduction.Repository;
 using Introduction.Service.Common;
 using Introduction.Service;
 using Autofac.Extensions.DependencyInjection;
+using MimeKit;
+using System;
+using MailKit.Net.Smtp;
+using MailKit;
+using MimeKit;
+using System.Net;
+using Microsoft.Extensions.DependencyInjection;
 
 internal class Program
 {
@@ -11,7 +18,7 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
+        // Add services to the container
 
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -23,6 +30,15 @@ internal class Program
         builder.Services.AddSingleton<IBookRepository, BookRepository>();
         builder.Services.AddTransient<IAuthorService, AuthorService>();
         builder.Services.AddTransient<IBookService, BookService>();
+        builder.Services.AddSingleton<IUserRepository, UserRepository>();
+        builder.Services.AddSingleton<IRoleRepository, RoleRepository>();
+        builder.Services.AddTransient<IUserService, UserService>();
+        builder.Services.AddTransient<IRoleService, RoleService>();
+        builder.Services.AddTransient<IEmailService, EmailService>();
+
+        builder.Services.AddTransient<SmtpClient>();
+       
+        
 
         var app = builder.Build();
 
@@ -41,4 +57,6 @@ internal class Program
 
         app.Run();
     }
+
+    
 }

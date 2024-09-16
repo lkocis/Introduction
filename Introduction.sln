@@ -7,15 +7,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Introduction.WebAPI", "Intr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Introduction.Service", "Introduction.Service\Introduction.Service.csproj", "{44228DD6-1261-4471-98C8-EEACE04ECCCF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Introduction.Repository", "Introduction.Repository\Introduction.Repository.csproj", "{34D20D93-33FD-41CF-8132-1DEF44F281E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Introduction.Repository", "Introduction.Repository\Introduction.Repository.csproj", "{34D20D93-33FD-41CF-8132-1DEF44F281E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Introduction.Repository.Common", "Introduction.Repository.Common\Introduction.Repository.Common.csproj", "{A650B7A2-5DB3-40D7-AC11-227CAC2DFBB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Introduction.Repository.Common", "Introduction.Repository.Common\Introduction.Repository.Common.csproj", "{A650B7A2-5DB3-40D7-AC11-227CAC2DFBB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Introduction.Service.Common", "Introduction.Service.Common\Introduction.Service.Common.csproj", "{564D4DD1-3FD9-42BC-B796-4F44E247B34D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Introduction.Service.Common", "Introduction.Service.Common\Introduction.Service.Common.csproj", "{564D4DD1-3FD9-42BC-B796-4F44E247B34D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Introduction.Model", "Introduction.Model\Introduction.Model.csproj", "{86C76EED-75C2-4450-9E76-1813F7C16A92}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Introduction.Model", "Introduction.Model\Introduction.Model.csproj", "{86C76EED-75C2-4450-9E76-1813F7C16A92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Introduction.Common", "Introduction.Common\Introduction.Common.csproj", "{7992720C-FD36-4534-9364-7C5A25444C36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Introduction.Common", "Introduction.Common\Introduction.Common.csproj", "{7992720C-FD36-4534-9364-7C5A25444C36}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
