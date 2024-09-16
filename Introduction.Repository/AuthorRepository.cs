@@ -176,7 +176,7 @@ namespace Introduction.Repository
             using var connection = new NpgsqlConnection(connectionString);
             using var command = new NpgsqlCommand();
 
-            sb.Append($"SELECT b.\"Id\" AS \"BookId\", " +
+            sb.Append($"SELECT b.\"Id\" AS \"BookId\","  +
                                 "b.\"Title\" AS \"BookTitle\", " +
                                 "b.\"Description\" AS \"BookDescription\", " +
                                 "b.\"AuthorId\" AS \"AuthorId\", " +
@@ -185,7 +185,7 @@ namespace Introduction.Repository
                                 "a.\"LastName\" AS \"LastName\", " +
                                 "a.\"DOB\" AS \"DOB\" " +
                                 "FROM \"Book\" b " +
-                                "LEFT JOIN \"Author\" a ON b.\"AuthorId\" = a.\"Id" //\" WHERE 1=1"
+                                "LEFT JOIN \"Author\" a ON b.\"AuthorId\" = a.\"Id\" WHERE 1=1"
             );
 
 
@@ -216,12 +216,9 @@ namespace Introduction.Repository
                 }
             }
 
-            sb.Append(" WHERE 1=1 ");
-
             if (!string.IsNullOrWhiteSpace(sorting.SortBy))
-            { 
-                sb.Append("ORDER BY ");
-                sb.Append($"a.\"{sorting.SortBy}\"");
+            {
+                sb.Append($" ORDER BY a.\"{sorting.SortBy}\" ");
 
                 if (!string.IsNullOrEmpty(sorting.SortDirection)
                     && (string.Equals(sorting.SortDirection, "asc", StringComparison.OrdinalIgnoreCase)

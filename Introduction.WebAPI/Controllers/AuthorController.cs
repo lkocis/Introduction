@@ -2,6 +2,7 @@
 using Introduction.Model;
 using Introduction.Service;
 using Introduction.Service.Common;
+using Introduction.WebAPI.REST;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -90,6 +91,13 @@ namespace Introduction.WebAPI.Controllers
             try
             {
                 Author author = await _authorService.GetAuthorByIdAsync(id);
+
+                var authorREST = new AuthorREST
+                {
+                    FirstName = author.FirstName,
+                    LastName = author.LastName,
+                    DOB = author.DOB
+                };
 
                 if (author == null)
                 {
