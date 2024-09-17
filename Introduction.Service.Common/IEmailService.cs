@@ -8,6 +8,6 @@ namespace Introduction.Service.Common
 {
     public interface IEmailService
     {
-        Task<bool> SendEmailAsync(string recipient, string subject, string message);
+        Task SendEmailAsync(string to, string subject, string body);
     }
 }

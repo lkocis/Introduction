@@ -1,28 +1,28 @@
 ﻿using Introduction.Service.Common;
+using System.Net;
 using System.Net.Mail;
 
 namespace Introduction.Service
 {
     public class EmailService : IEmailService
     {
-        private readonly SmtpClient _smtpClient;
-        public EmailService(SmtpClient smtpClient)
+        public SmtpClient _smtpClient;
+        public string _fromEmail;
+
+        public EmailService(SmtpClient smtpClient, string fromEmail)
         {
             _smtpClient = smtpClient;
+            _fromEmail = fromEmail;
         }
-        public async Task<bool> SendEmailAsync(string recipient, string subject, string message)
+
+        public async Task SendEmailAsync(string to, string subject, string body)
         {
-            var mailMessage = new MailMessage("noreply@example.com", recipient, subject, message);
-            try
+            using (var mailMessage = new MailMessage(_fromEmail, to, subject, body))
             {
+                mailMessage.IsBodyHtml = false; 
+
                 await _smtpClient.SendMailAsync(mailMessage);
-                return true;
             }
-            catch (Exception ex)
-            {
-                return false;
-            }
-            
         }
     }
 }

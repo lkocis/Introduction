@@ -6,11 +6,12 @@ using Introduction.Service;
 using Autofac.Extensions.DependencyInjection;
 using MimeKit;
 using System;
-using MailKit.Net.Smtp;
-using MailKit;
-using MimeKit;
-using System.Net;
+using System.Net.Mail;
 using Microsoft.Extensions.DependencyInjection;
+using Autofac.Core;
+using Microsoft.Extensions.Options;
+using System.Net;
+using Microsoft.EntityFrameworkCore;
 
 internal class Program
 {
@@ -34,8 +35,21 @@ internal class Program
         builder.Services.AddSingleton<IRoleRepository, RoleRepository>();
         builder.Services.AddTransient<IUserService, UserService>();
         builder.Services.AddTransient<IRoleService, RoleService>();
-        builder.Services.AddTransient<IEmailService, EmailService>();
 
+        builder.Services.AddSingleton<IReservationRepository, ReservationRepository>();
+        builder.Services.AddScoped<IReservationService, ReservationService>();
+
+        // Configure SMTP Client
+        builder.Services.AddScoped<IEmailService, EmailService>();
+        builder.Services.AddSingleton(new SmtpClient
+        {
+            Host = "smtp.gmail.com", 
+            Port = 587, 
+            Credentials = new NetworkCredential("noreply@example.com", "noreply"),
+            EnableSsl = true
+        });
+
+        builder.Services.AddControllers();
 
         var app = builder.Build();
 

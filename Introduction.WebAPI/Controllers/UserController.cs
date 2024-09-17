@@ -18,27 +18,6 @@ namespace Introduction.WebAPI.Controllers
             _userService = userService;
         }
 
-        [HttpPost]
-        [Route("PostReservation/")]
-        public async Task<ActionResult> PostUserReservationAsync([FromBody] Reservation reservation, string messageText, User user)
-        {
-            try
-            {
-                var isSuccessful = await _userService.SendMessage(user, messageText, reservation);
-
-                if (!isSuccessful)
-                {
-                    return BadRequest();
-                }
-                return Ok();
-
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
         [HttpGet]
         [Route("GetUser/{id}")]
         public async Task<ActionResult> GetUserInfoAsync(Guid id)

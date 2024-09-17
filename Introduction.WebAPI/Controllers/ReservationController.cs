@@ -12,6 +12,20 @@ namespace Introduction.WebAPI.Controllers
         public ReservationController(IReservationService reservationService)
         {
             _reservationService = reservationService;
-        }   
+        }
+
+        [HttpPost("send-confirmation/{reservationId}")]
+        public async Task<IActionResult> SendConfirmationAsync(Guid reservationId)
+        {
+            try
+            {
+                await _reservationService.SendBookingConfirmationEmailAsync(reservationId);
+                return Ok("Booking confirmation email sent successfully.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error sending email: {ex.Message}");
+            }
+        }
     }
 }

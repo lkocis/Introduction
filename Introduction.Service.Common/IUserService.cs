@@ -10,6 +10,5 @@ namespace Introduction.Service.Common
     public interface IUserService
     {
         Task<User> GetUserInfoAsync(Guid id);
-        Task<bool> SendMessage(User recepient, string messageText, Reservation reservation);
     }
 }

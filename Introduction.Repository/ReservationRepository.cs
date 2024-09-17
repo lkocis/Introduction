@@ -16,7 +16,8 @@ namespace Introduction.Repository
         "Password=postgres;" +
         "Database=postgres";
 
-        public async Task<Reservation> GetReservationInfo(Guid id)
+        public Reservation Reservation { get; set; }
+        public async Task<Reservation> GetReservationById(Guid id)
         {
             Reservation reservation = new Reservation();
             using var connection = new NpgsqlConnection(connectionString);
@@ -46,5 +47,7 @@ namespace Introduction.Repository
             }
             return reservation;
         }
+
+        
     }
 }
