@@ -19,6 +19,10 @@ namespace Introduction.Service
         {
             using (var mailMessage = new MailMessage(_fromEmail, to, subject, body))
             {
+                mailMessage.From = new MailAddress("hookingapp2@gmail.com");
+                mailMessage.To.Add(to);
+                mailMessage.Subject = subject;
+                mailMessage.Body = body;
                 mailMessage.IsBodyHtml = false; 
 
                 await _smtpClient.SendMailAsync(mailMessage);

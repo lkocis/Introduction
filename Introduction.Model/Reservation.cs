@@ -20,5 +20,6 @@ namespace Introduction.Model
         public Guid? UpdatedByUserId { get; set; }
         public User? User { get; set; }
         public ReservationType? ReservationType { get; set; }
+        public HotelReservationType? HotelReservationType { get; set; }
     }
 }

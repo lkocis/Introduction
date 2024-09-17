@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Introduction.Model;
@@ -16,38 +17,68 @@ namespace Introduction.Repository
         "Password=postgres;" +
         "Database=postgres";
 
-        public Reservation Reservation { get; set; }
         public async Task<Reservation> GetReservationById(Guid id)
         {
-            Reservation reservation = new Reservation();
-            using var connection = new NpgsqlConnection(connectionString);
-            var commandText = $"SELECT r.\"Id\" AS \"Id\", " +
-                                "r.\"Price\" AS \"Price\", " +
-                                "r.\"DateFrom\" AS \"DateFrom\", " +
-                                "a.\"DateTo\" AS \"DateTo\" " +
-                                "FROM \"Reservation\" r " +
-                                "WHERE a.\"Id\"=@id;";
+            var reservation = new Reservation();
 
+            var commandText = $"SELECT r.\"Id\" AS \"Id\", " +
+           "r.\"Price\" AS \"Price\", " +
+           "r.\"DateFrom\" AS \"DateFrom\", " +
+           "r.\"DateTo\" AS \"DateTo\", " +
+           "u.\"Email\" AS \"UserEmail\", " +
+           "u.\"FirstName\" AS \"UserFirstName\", " +
+           "rt.\"Type\" AS \"ReservationType\", " +
+           "h.\"Name\" AS \"HotelName\" " +
+            "FROM \"Reservation\" r " +
+            "INNER JOIN \"User\" u ON r.\"UserId\" = u.\"Id\" " +
+            "INNER JOIN \"ReservationType\" rt ON r.\"ReservationTypeId\" = rt.\"Id\" " +
+            "INNER JOIN \"HotelReservationType\" hrt ON r.\"ReservationTypeId\" = hrt.\"ReservationTypeId\" " +
+            "INNER JOIN \"Hotel\" h ON hrt.\"HotelId\" = h.\"Id\" " +
+            "WHERE r.\"Id\" = @id;";
+
+            using var connection = new NpgsqlConnection(connectionString);
             using var command = new NpgsqlCommand(commandText, connection);
             command.Parameters.AddWithValue("@id", id);
-            connection.Open();
 
-            using NpgsqlDataReader reader = await command.ExecuteReaderAsync();
-            if (reader.HasRows)
+            try
             {
-                reader.Read();
-                reservation.Id = Guid.Parse(reader["Id"].ToString());
-                reservation.Price = Convert.ToDecimal(reader["Price"]);
-                reservation.DateFrom = Convert.ToDateTime(reader["DateFrom"].ToString());
-                reservation.DateTo = Convert.ToDateTime(reader["DateTo"].ToString());
+                await connection.OpenAsync();
+
+                using var reader = await command.ExecuteReaderAsync();
+                if (await reader.ReadAsync())
+                {
+                    reservation.Id = reader.GetGuid(reader.GetOrdinal("Id"));
+                    reservation.Price = reader.GetDecimal(reader.GetOrdinal("Price"));
+                    reservation.DateFrom = reader.GetDateTime(reader.GetOrdinal("DateFrom"));
+                    reservation.DateTo = reader.GetDateTime(reader.GetOrdinal("DateTo"));
+
+                    reservation.User = new User
+                    {
+                        Email = reader.GetString(reader.GetOrdinal("UserEmail")),
+                        FirstName = reader.GetString(reader.GetOrdinal("UserFirstName"))
+                    };
+
+                    reservation.ReservationType = new ReservationType
+                    {
+                        Type = reader.GetString(reader.GetOrdinal("ReservationType"))
+                    };
+
+                    reservation.HotelReservationType = new HotelReservationType
+                    {
+                        Hotel = new Hotel
+                        {
+                            Name = reader.GetString(reader.GetOrdinal("HotelName"))
+                        }
+                    };
+                }
             }
-            if (reservation == null)
+            catch (Exception ex)
             {
-                return reservation;
+                Console.WriteLine($"Exception: {ex.Message}");
             }
+
             return reservation;
         }
-
-        
     }
+    
 }

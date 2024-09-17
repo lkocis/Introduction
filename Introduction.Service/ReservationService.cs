@@ -37,12 +37,12 @@ namespace Introduction.Service
                 string subject = $"Booking Confirmation";
                 string body = $@"
                         Dear {reservation.User.FirstName},
-                        Your reservation has been confirmed.
+                        Your reservation in {reservation.HotelReservationType.Hotel.Name} has been confirmed.
                         Reservation Details:
                         Check-in: {reservation.DateFrom:MM/dd/yyyy}
                         Check-out: {reservation.DateTo:MM/dd/yyyy}
-                        Total Price: ${reservation.Price}
-                        Reservation type: ${reservation.ReservationType.Type}
+                        Total Price: {reservation.Price}$
+                        Reservation type: {reservation.ReservationType.Type}
                         Thank you for booking with us.";
 
                 await _emailService.SendEmailAsync(reservation.User.Email, subject, body);
