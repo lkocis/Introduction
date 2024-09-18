@@ -22,9 +22,5 @@ namespace Introduction.Service
             User user = await _userRepository.GetUserInfoAsync(id);
             return user;
         }
-
-        
-
-
     }
 }
