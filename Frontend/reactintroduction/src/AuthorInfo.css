@@ -1,0 +1,134 @@
+
+  .author-name {
+    margin-top: 40px;
+    font-size: 1.5em;
+    margin: 8px 0;
+  }
+
+  .author-DOB {
+    font-size: 1em;
+    margin: 8px 0;
+    margin-top: 60px;
+  }
+
+  .buttonNext {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 10px;
+}
+
+.buttonPrevious {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 10px;
+}
+
+.image-container {
+  display: flex;
+  flex-direction: column; 
+  align-items: center;   
+  justify-content: center;
+  margin: 20px auto;     
+}
+
+.author-image {
+  max-width: 50%;
+  height: auto;
+  margin-bottom: 10px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 0;
+}
+
+.author-info-container {
+  text-align: center;
+}
+
+.button-ShowMore {
+  padding: 10px; 
+  margin-top: 10px; 
+}
+
+.name-and-DOB {
+    text-align: center;
+    margin-top: 100px;
+    white-space: nowrap; /* Disable wrapping */
+    overflow: hidden;    /* Hide overflowing content */
+    text-overflow: ellipsis; /* Add ... for overflowing text */
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 20px;
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  min-height: 100vh; 
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px; 
+}
+
+label {
+  display: block;
+  margin: 1px 0 5px;
+  font-weight: bold;
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  max-width: 200px; 
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  transition: border 0.3s;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+  border: 1px solid #007bff; 
+  outline: none;
+}
+
+button-delete {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  margin-top: 10px; 
+}
+
+.authors-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.authors-table th, .authors-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.authors-table th {
+  background-color: #f2f2f2;
+}
+
+.author-table-image {
+  max-width: 50px; /* Adjust size as needed */
+  height: auto;
+}

@@ -20,6 +20,16 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAll", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            });
+        });
+
         // Add services to the container
 
         builder.Services.AddControllers();
@@ -70,6 +80,16 @@ internal class Program
         app.UseAuthorization();
 
         app.MapControllers();
+
+
+        app.UseCors("AllowAll");
+
+        app.UseRouting();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+        });
 
         app.Run();
     }
