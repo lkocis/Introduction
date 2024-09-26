@@ -1,15 +1,15 @@
 import './AuthorInfo.css';
 import React, { useState } from 'react';
 import AddAuthorForm from './AddAuthorForm';
-import AuthorInfo from './AuthorInfo';
 import GetAuthorById from './GetAuthorById';
 import UpdateAuthor from './UpdateAuthor';
 import { handleDeleteAuthor } from './HandleDeleteAuthor';
+import GetAllAuthors from './GetAllAuthors';
 
 function App() {
     const [index, setIndex] = useState(0);
     const [authorsList, setAuthorsList] = useState([]); 
-    const [selectedAuthor, setSelectedAuthor] = useState(null); // Changed to null
+    const [selectedAuthor, setSelectedAuthor] = useState(null); 
 
     return (
         <>
@@ -17,20 +17,21 @@ function App() {
             <table className="authors-table">
                 <thead>
                     <tr>
-                        <th>Name</th>
+                        <th>FirstName</th>
+                        <th>LastName</th>
                         <th>Date of Birth</th>
                         <th>Image</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {authorsList.length > 0 ? (
-                        authorsList.map((author) => (
+                    {authorsList.map((author) => (
                             <tr key={author.id}>
-                                <td>{author.name}</td>
+                                <td>{author.firstName}</td>
+                                <td>{author.lastName}</td>
                                 <td>{author.dob}</td>
                                 <td>
-                                    <img src={author.image} alt={author.name} className="author-table-image" />
+                                    <img src={author.image} alt={author.firstName} className="author-table-image" />
                                 </td>
                                 <td>
                                     <button onClick={() => setSelectedAuthor(author)}>Edit</button>
@@ -38,15 +39,12 @@ function App() {
                                 </td>
                             </tr>
                         ))
-                    ) : (
-                        <tr>
-                            <td colSpan="4">No authors available</td>
-                        </tr>
-                    )}
+                    }
                 </tbody>
             </table>
 
             <AddAuthorForm authors={authorsList} setList={setAuthorsList} />
+            <GetAllAuthors setAuthorsList={setAuthorsList}/>
 
             {selectedAuthor && (
                 <UpdateAuthor 

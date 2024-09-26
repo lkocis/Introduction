@@ -26,7 +26,7 @@ namespace Introduction.WebAPI.Controllers
 
         [HttpPost]
         [Route("PostAuthor/")]
-        public async Task<ActionResult> PostAuthorAsync([FromBody] Author author)
+        public async Task<ActionResult> PostAuthorAsync([FromBody]Author author)
         {
             try 
             {
@@ -96,7 +96,8 @@ namespace Introduction.WebAPI.Controllers
                 {
                     FirstName = author.FirstName,
                     LastName = author.LastName,
-                    DOB = author.DOB
+                    DOB = author.DOB,
+                    Image = author.Image
                 };
 
                 if (author == null)

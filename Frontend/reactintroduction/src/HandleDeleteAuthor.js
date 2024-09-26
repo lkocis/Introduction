@@ -1,14 +1,19 @@
-export function handleDeleteAuthor(index, setIndex, authorsList, setAuthorsList) {
-    if (index < 0 || index >= authorsList.length) {
-        console.error("Invalid index for deletion:", index);
-        return;
-    }
+import axios from 'axios';
 
-    const updatedAuthors = [...authorsList.slice(0, index), ...authorsList.slice(index + 1)];
+function handleDeleteAuthor(index, setIndex, authorsList, setAuthorsList) 
+{
+    const authorToDelete = authorsList[index];
 
-    setAuthorsList(updatedAuthors);
-    localStorage.setItem('authors', JSON.stringify(updatedAuthors));
+    axios.delete(`http://localhost:7042/author/deleteauthorbyid/${authorToDelete.id}`)
+        .then((response) => {
+            const updatedAuthors = [...authorsList.slice(0, index), ...authorsList.slice(index + 1)];
+            
+            setAuthorsList(updatedAuthors);
 
-    const newIndex = Math.min(index, updatedAuthors.length - 1); 
-    setIndex(newIndex);
+            const newIndex = Math.min(index, updatedAuthors.length - 1);
+            setIndex(newIndex);
+        })
+        .catch(error => {
+            console.error("Error deleting author:", error);
+        });
 }
