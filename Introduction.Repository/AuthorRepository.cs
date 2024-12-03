@@ -21,13 +21,14 @@ namespace Introduction.Repository
             try
             {
                 using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
-                string commandText = $"INSERT INTO\"Author\"VALUES(@id, @firstName, @lastName, @DOB);";
+                string commandText = $"INSERT INTO\"Author\"VALUES (@id, @firstName, @lastName, @DOB, @image);";
                 using var command = new NpgsqlCommand(commandText, connection);
 
                 command.Parameters.AddWithValue("@id", NpgsqlTypes.NpgsqlDbType.Uuid, Guid.NewGuid());
                 command.Parameters.AddWithValue("@firstName", author.FirstName);
                 command.Parameters.AddWithValue("@lastName", author.LastName);
                 command.Parameters.AddWithValue("@DOB", author.DOB);
+                command.Parameters.AddWithValue("@image", author.Image);
 
                 connection.Open();
                 var numberOfCommits = await command.ExecuteNonQueryAsync();
@@ -79,6 +80,7 @@ namespace Introduction.Repository
                                 "a.\"FirstName\" AS \"FirstName\", " +
                                 "a.\"LastName\" AS \"LastName\", " +
                                 "a.\"DOB\" AS \"DOB\", " +
+                                "a.\"Image\" AS \"Image\", " +
                                 "b.\"Id\" AS \"BookId\", " +
                                 "b.\"Title\" AS \"BookTitle\", " +
                                 "b.\"Description\" AS \"BookDescription\", " +
@@ -99,6 +101,7 @@ namespace Introduction.Repository
                     author.FirstName = reader["FirstName"].ToString();
                     author.LastName = reader["LastName"].ToString();
                     author.DOB = Convert.ToDateTime(reader["DOB"].ToString());
+                    author.Image = reader["Image"].ToString();
 
                     Book book = new Book();
                     book.Id = Guid.Parse(reader["BookId"].ToString());
@@ -176,7 +179,7 @@ namespace Introduction.Repository
             using var connection = new NpgsqlConnection(connectionString);
             using var command = new NpgsqlCommand();
 
-            sb.Append($"SELECT b.\"Id\" AS \"BookId\","  +
+            sb.Append($"SELECT b.\"Id\" AS \"BookId\"," +
                                 "b.\"Title\" AS \"BookTitle\", " +
                                 "b.\"Description\" AS \"BookDescription\", " +
                                 "b.\"AuthorId\" AS \"AuthorId\", " +

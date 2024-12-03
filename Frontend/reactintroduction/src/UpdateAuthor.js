@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function UpdateAuthorForm({ authors, setList, selectedAuthor, setSelectedAuthor }) 
 {
     
     const [author, setAuthor] = useState({
-        name: "",
+        firstName: "",
+        lastName: "",
         dob: "",
-        image: "",
-        bio: ""
+        image: ""
     });
 
     useEffect(() => {
@@ -16,85 +17,78 @@ function UpdateAuthorForm({ authors, setList, selectedAuthor, setSelectedAuthor 
         }
     }, [selectedAuthor]);
 
-    function handleUpdateAuthor(e)
-    {
-        const updatedAuthors = authors.map(a => a.id === author.id ? author : a);
+    function handleUpdateAuthor(e) {
+        e.preventDefault(); 
 
-        setList(updatedAuthors);
-        localStorage.setItem('authors', JSON.stringify(updatedAuthors));
+        axios.put(`http://localhost:7042/author/putauthorbyid/${author.id}`, author)
+            .then((response) => {
+                const updatedAuthors = authors.map(a => a.id === author.id ? response.data : a);
+                setList(updatedAuthors);
+            })
+            .catch((error) => {
+                console.error("There was an error updating the author!", error);
+            });
 
         setAuthor({
-            name: "",
+            firstName: "",
+            lastName: "",
             dob: "",
-            image: "",
-            bio: ""
+            image: ""
         });
 
-    setSelectedAuthor(null);
-    }
-    
-
-    
-
-    function handleChange(e)
-    {
-        setAuthor({...author, [e.target.name] : e.target.value})
+        setSelectedAuthor(null);
     }
 
+    function handleChange(e) {
+        setAuthor({ ...author, [e.target.name]: e.target.value });
+    }
 
     return (
         <div>
-            <h3>Update Author</h3>
-            <label>
-                Id: 
-                <input
-                    type = "text"
-                    name ="id"
-                    value = {author.Id}
-                    onChange  = {handleChange}
-                />
-            </label>
-            <br />
-            <label>
-                Name:
-                <input
-                    type="text"
-                    name="name"
-                    value={author.name}
-                    onChange={handleChange}
-                />
-            </label>
-            <br />
-            <label>
-                Date Of Birth:
-                <input
-                    type="text"
-                    name="dob"
-                    value={author.dob}
-                    onChange={handleChange}
-                />
-            </label>
-            <br />
-            <label>
-                Image URL:
-                <input
-                    type="text"
-                    name="image"
-                    value={author.image}
-                    onChange={handleChange}
-                />
-            </label>
-            <br />
-            <label>
-                Bio:
-                <textarea
-                    name="bio"
-                    value={author.bio}
-                    onChange={handleChange}
-                />
-            </label>
-            <br />
-            <button onClick={handleUpdateAuthor}>Update</button>
+            <form onSubmit={handleUpdateAuthor}>
+                <h3>Update author</h3>
+                <label>
+                    First Name:
+                    <input
+                        type="text"
+                        name="firstName" 
+                        value={author.firstName}
+                        onChange={handleChange}
+                    />
+                </label>
+                <br />
+                <label>
+                    Last Name:
+                    <input
+                        type="text"
+                        name="lastName" 
+                        value={author.lastName}
+                        onChange={handleChange}
+                    />
+                </label>
+                <br />
+                <label>
+                    Date Of Birth:
+                    <input
+                        type="date"
+                        name="dob"
+                        value={author.dob}
+                        onChange={handleChange}
+                    />
+                </label>
+                <br />
+                <label>
+                    Image URL:
+                    <input
+                        type="text"
+                        name="image"
+                        value={author.image}
+                        onChange={handleChange}
+                    />
+                </label>
+                <br />
+                <button type="submit">Update</button>
+            </form>
         </div>
     );
 }

@@ -1,0 +1,50 @@
+.bookingHistory {
+    background-image: ;
+}
+
+.bookingHistory-container {
+    background-color: #23272A; /* Darker background for the booking history item */
+    border-radius: 8px;
+    padding: 20px;
+    margin: 15px;
+    transition: background-color 0.3s;
+}
+
+.bookingHistory-container:hover {
+    background-color: #2F3136; /* Lighter background on hover */
+}
+
+h2 {
+    margin: 0 0 10px 0;
+    color: #FFD700; /* Golden color for titles */
+}
+
+.description {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.description span {
+    font-weight: bold; /* Make labels bold */
+}
+
+.state {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #99AAB5; /* Light gray for state text */
+}
+
+.addReview-button {
+    background-color: #FFD700; /* Golden button */
+    color: black;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.addReview-button:hover {
+    background-color: #FFC107; /* Slightly lighter on hover */
+}
