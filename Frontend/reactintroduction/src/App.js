@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import AddAuthorForm from './AddAuthorForm';
 import GetAuthorById from './GetAuthorById';
 import UpdateAuthor from './UpdateAuthor';
-import { handleDeleteAuthor } from './HandleDeleteAuthor';
+import handleDeleteAuthor from './HandleDeleteAuthor';
 import GetAllAuthors from './GetAllAuthors';
 
 function App() {

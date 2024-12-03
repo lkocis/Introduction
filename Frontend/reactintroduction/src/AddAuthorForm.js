@@ -15,8 +15,7 @@ function AddAuthorForm({ authors, setList }) {
     {
       setAuthor({...author, [e.target.name] : e.target.value})
     }
-
-    debugger
+    
     function handleAddAuthor(e) 
     {
       e.preventDefault();
@@ -28,6 +27,7 @@ function AddAuthorForm({ authors, setList }) {
         console.log("Response from server:", response.data);
         const addedAuthor = response.data; 
         const updatedAuthors = [...authors, addedAuthor];
+        console.log("Updated authors list:", updatedAuthors);
         setList(updatedAuthors);
 
         setAuthor({

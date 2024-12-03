@@ -3,16 +3,19 @@ import axios from 'axios';
 
 function GetAllAuthors({ setAuthorsList }) {
     useEffect(() => {
-        axios.get('http://localhost:7042/Author/getall') 
-            .then(response => {
-                setAuthorsList(response.data); 
-            })
-            .catch(error => {
+        const fetchAuthors = async () => {
+            try {
+                const response = await axios.get('http://localhost:7042/Author/getall');
+                setAuthorsList(response.data);  
+            } catch (error) {
                 console.error("Error fetching authors:", error);
-            });
-    }, [setAuthorsList]); 
+            }
+        };
 
-    return null; 
+        fetchAuthors();
+    }, [setAuthorsList]);  
+
+    return null;  
 }
 
 export default GetAllAuthors;
